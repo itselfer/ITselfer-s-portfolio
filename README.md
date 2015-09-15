@@ -1,5 +1,5 @@
 # ITselfer-s-portfolio
-(ITselfer, A man who perform IT for itself by myself.)
+: ITselfer, A man who perform IT for itself by myself.
 
 
 본 website는 저(ITselfer)의 개인적인 포트폴리오 사이트로서 full-stack 개발자를 꿈꾸는 저의 첫 개인 website입니다.<br />
@@ -10,7 +10,7 @@ itselfer.link에 들어오시면 현재 개발 진행 중인 사이트를 보실
   * back-end  : Node.js, MongoDB
    
   
-열심히 개발중입니다...^^ <br />
+아직 열심히 개발중입니다...^^ <br />
 v.0.0.0000.........005
 
 
