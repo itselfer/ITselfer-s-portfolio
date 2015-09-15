@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ITSelfer's Portfolio</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="./resources/css/style.css">
+	<link rel="stylesheet" type="text/css" href="./resources/css/background-image.css">
+	<script src="./resources/javascript/jquery-1.10.1.min.js"></script>
+	<!--<script src="./resources/javascript/jquery-1.9.0.min.js"></script>
+	<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script> <!-- 구버젼 jquery 호환 --> 
+
+  <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script> -->
+	<script src="./resources/javascript/jquery-ui.1.10.3.js"></script>
+	<script src="./resources/javascript/background-shadow.js"></script>
+	<script src="./resources/javascript/header-icon.js"></script>
+	<script src="./resources/javascript/network-icon.js"></script>
+	<script src="./resources/javascript/footer-icon.js"></script>
+	<script src="./resources/javascript/network-facebook.js"></script>
+	<script src="./resources/javascript/show_panel.js"></script>
+	<!--<script src="./resources/javascript/mindmap_memo.js"></script> -->
+	<script src="./resources/javascript/memo_ajax.js"></script>
+<!-- 
+	 mindmap library's 
+
+		  <link rel="stylesheet" type="text/css" href="./resources/javascript/js-mindmap.css" />
+		  <link href="./resources/javascript/style.css" type="text/css" rel="stylesheet"/>
+
+		   UI, for draggable nodes 
+		  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
+
+		   Raphael for SVG support (won't work on android) 
+		  <script type="text/javascript" src="./resources/javascript/raphael-min.js"></script>
+
+		   Mindmap 
+		  <script type="text/javascript" src="./resources/javascript/js-mindmap.js"></script>
+
+		   Kick everything off 
+		  <script src="./resources/javascript/script.js" type="text/javascript"></script>
+
+	 mindmap library's 
+-->
+	 <!--Add fancyBox main JS and CSS files -->
+	<script type="text/javascript" src="./resources/javascript/source/jquery.fancybox.js?v=2.1.5"></script>
+	<link rel="stylesheet" type="text/css" href="./resources/javascript/source/jquery.fancybox.css?v=2.1.5" media="screen" />
+	
+
+	 <!-- Add Thumbnail helper (this is optional) -->
+	<link rel="stylesheet" type="text/css" href="./resources/javascript/source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" />
+	<script type="text/javascript" src="./resources/javascript/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
+ 
+	<script type="text/javascript">
+		var flag = 1;
+		var idx = 0;
+		
+		var mycallback = function(data) {
+	      	$(".close").click();
+	      	// data = $.parseJSON(data);
+			console.log(data);
+			console.log("callback success");
+		}
+
+		// 2015.09.13 --> page load할 때, mongo에서 select 해 온 데이터를 박는 작업 중 unexpected token 'o' 발생,
+		// json형식의 데이터를 헤더에서 잡아줘야할지 JSON.stringify로 할지 JSON.parse로 할지 고민 중.
+		// app.js에서는 JSON.stringify로 잡아줘서 콜백에 붙여서 보내줬음.
+		var select_guestbook = function() {
+			$.ajax({
+				url		: "http://localhost:3000",
+		        dataType: 'jsonp',
+		        jsonpCallback: "myCallback",
+		  //       headers: { 
+				// 	"Content-Type": "application:jsonp; charset=utf-8"
+				// },
+				// contentType: 'application/json',
+		        success: function(data){
+		        	// data = $.parseJSON(data);
+		        	// alert("success");
+		        	console.log(data[0]._idx);
+	        		// $("#wrapper-guest > div")[data.write._idx].remove();
+	        		for(var i=0; i<data.length; i++) {
+		        		$("#wrapper-guest > div")[data[i]._idx].innerHTML = 
+		        			"<div style='margin: 10%; height: 80%; width: 80%;'>" +
+		        			"작성자: " + data[i]._name + "<br />" +
+		        			"내용: " + data[i].contents + "" + 
+	        				"</div>";
+	        		}
+		        	// }
+		        	// }
+		        },
+		        complete: function(req, txt) {
+		        	console.log(req);
+		        	console.log(txt);
+		        	// alert('complete');
+		    	},
+		    	error: function(e) {
+		    		alert("error");
+		    		console.log(e);
+		    	}
+			});
+		}
+
+
+		// $(".active").click(function() {$(".overlay").css({"display":"block", "opacity":"1", "top":"240px", "left":"726.5px"});}); 
+		/* window.onload */
+		$(document).ready(function() {
+
+			$("#homeCls").attr('src', './resources/images/Icon_home_.png');
+
+			// getFB();
+			background_shadow();
+			header_icon();
+			network_icon();
+			footer_icon();
+			// map_canvas();
+
+			$(".wrapper-home").hide();
+			$(".wrapper-about").hide();
+			$(".wrapper-portfolio").hide();
+			$(".wrapper-contact").hide();
+
+			
+			$("footer").hide();
+			
+			// $(".wrapper-board").show();
+			// $("._spaceFormindmap").show();
+			// $("#overlaylaunch-inAbox").hide();
+
+
+
+			// $("#sendEmailBtn").click(function (e) { // sending email
+			// 	$("#form").attr("action", "http://127.0.0.1:5586/email").submit();
+			// 	alert('Success send from ITSelfer!');
+			// 	document.location.href = "http://www.itselfer.com"; 
+			// });
+
+			
+			// $(".js-mindmap-active a").bind('click', function () {
+			// 	alert('1');
+			// }
+
+			// $("a.node.ui-draggable.active").bind('click', function() {
+			// 	alert('1');
+			// });
+			
+			// if($("#wrapper-guest > div").children().length != 0) {
+			// 	alert('1');
+			// 	var submitData = function() {
+				// var success = "";
+
+
+
+				// }
+			// }
+
+			$("#wrapper-guest > div").click(function(){
+				// console.log($(this).index());
+				idx = $(this).index();
+				if($(this).children().length == 0) {
+					$(this).append("<form id='form_guestbook' method='get' action=''>");
+					$(this).append("<input type='text' id='frm_guset_name' name='frm_guset_name' placeholder='name' required/><br />");
+					$(this).append("<input type='text' id='frm_guset_email' name='frm_guset_email' placeholder='email'/><br />");
+					$(this).append("<textarea cols='30' rows='5' id='frm_guset_contents' name='frm_guset_contents' placeholder='여기에 방명록을 쓰시면 됩니다^^' required></textarea><br />");
+					$(this).append("<div style='width: 100%; text-align: center;'><input type='button' id='frm_guest_submit' name='frm_guest_submit' value='등록' onclick='javascript:submitData(idx);'/></div>");
+					$(this).append("</form>");
+				}else {
+					// 이미 글이 있는 방명록일 경우,
+				}
+				
+			});
+			
+
+			// /* home page */
+			$("a#homeLink").bind('click', function () {		flag = 1;
+				$("#homeCls").attr('src', './resources/images/Icon_home_.png');
+				$("#aboutCls").attr('src', './resources/images/Icon_profile.png');
+				$("#portfolioCls").attr('src', './resources/images/Icon_portfolio.png');
+				$("#contactCls").attr('src', './resources/images/Icon_email.png');
+
+				$(".wrapper-home").hide();
+				$(".wrapper-about").hide();
+				$(".wrapper-portfolio").hide();
+				$(".wrapper-contact").hide();
+
+				// $("._spaceFormindmap").show();
+				// $("#overlaylaunch-inAbox").show();
+
+
+
+
+
+				// // home - about - home
+				// $(".profile").after($(".about")[0]);
+				// $(".info").after($(".about")[1]);
+				// $(".gallery-small-5").after($(".about")[2]);
+				// $(".employment").after($(".about")[3]);
+				// $(".education").after($(".gallery-small-6"));
+				// $(".gallery-small-6").after($(".gallery-small-7"));
+
+				// // home - portfolio - home
+				// $(".profile-image").after($(".gallery")[0]);
+				// $(".aboutme").after($(".gallery-small-2"));
+				// $(".gallery-small-2").after($(".gallery-big-1"));
+				// $(".gallery-big-1").after($(".gallery-small-3"));
+				// $(".gallery-small-3").after($(".gallery-small-4"));
+				// $(".message").after($(".gallery-small-5"));
+				// $(".gallery-small-5").after($(".employment"));
+				// $(".education").after($(".gallery-small-6"));
+				// $(".gallery-small-6").after($(".gallery-small-7"));
+
+				// // home - contact - home
+				// $(".Box_second").prepend($(".info"));
+				// $(".info").after($(".skills"));
+				// $(".left").prepend($(".map"));
+				// $(".map").after($(".emailme"));
+				// $(".emailme").after($(".facebook"));
+				// $(".right").prepend($(".officeNetwork"));
+				// $(".officeNetwork").after($(".twitter"));
+
+				
+			});
+			// /* about page */
+			$("a#aboutLink").bind('click', function () {	flag = 2;
+				$("#homeCls").attr('src', './resources/images/Icon_home.png');
+				$("#aboutCls").attr('src', './resources/images/Icon_profile_.png');
+				$("#portfolioCls").attr('src', './resources/images/Icon_portfolio.png');
+				$("#contactCls").attr('src', './resources/images/Icon_email.png');
+
+				$(".wrapper-home").hide();
+				$(".wrapper-portfolio").hide();
+				$(".wrapper-contact").hide();
+				$(".wrapper-about").show();
+
+				// $("._spaceFormindmap").hide();
+				// $("#overlaylaunch-inAbox").hide();
+
+
+				var data_aboutme = $(".Box_first").find($(".aboutme"));
+				$(".wrap_aboutme").append(data_aboutme);
+				var data_skills = $(".Box_second").find($(".skills"));
+				$(".wrap_skills").append(data_skills);
+				var data_employment = $(".Box_second").find($(".employment"));
+				$(".wrap_employment").append(data_employment);
+				var data_education = $(".Box_second").find($(".education"));
+				$(".wrap_education").append(data_education);
+			});
+			// /* portfolio page */
+			$("a#portfolioLink").bind('click', function () {	flag = 3;
+				$("#homeCls").attr('src', './resources/images/Icon_home.png');
+				$("#aboutCls").attr('src', './resources/images/Icon_profile.png');
+				$("#portfolioCls").attr('src', './resources/images/Icon_portfolio_.png');
+				$("#contactCls").attr('src', './resources/images/Icon_email.png');
+
+				$(".wrapper-home").hide();
+				$(".wrapper-about").hide();
+				$(".wrapper-contact").hide();
+				$(".wrapper-portfolio").show();
+
+				// $("._spaceFormindmap").hide();
+				// $("#overlaylaunch-inAbox").hide();
+
+				var data_gallery_1 = $(".Box_first .profile").find($(".gallery-small-1"));
+				$(".wrap_gallery_1").append(data_gallery_1);
+				var data_gallery_big_1 = $(".Box_first").find($(".gallery-big-1"));
+				$(".wrap_gallery_big_1").append(data_gallery_big_1);
+				var data_gallery_2 = $(".Box_first").find($(".gallery-small-2"));
+				$(".wrap_gallery_2").append(data_gallery_2);
+				var data_gallery_3 = $(".Box_first").find($(".gallery-small-3"));
+				$(".wrap_gallery_3").append(data_gallery_3);
+				var data_gallery_4 = $(".Box_first").find($(".gallery-small-4"));
+				$(".wrap_gallery_4").append(data_gallery_4);
+				var data_gallery_5 = $(".Box_second").find($(".gallery-small-5"));
+				$(".wrap_gallery_5").append(data_gallery_5);
+				var data_gallery_6 = $(".Box_second").find($(".gallery-small-6"));
+				$(".wrap_gallery_6").append(data_gallery_6);
+				var data_gallery_7 = $(".Box_second").find($(".gallery-small-7"));
+				$(".wrap_gallery_7").append(data_gallery_7);
+				var data_message = $(".Box_second").find($(".gallery-small-img"));
+				$(".wrap_message").append(data_message);
+			});
+
+			// /* contact page */
+			$("a#contactLink").bind('click', function () {		flag = 4;
+				$("#homeCls").attr('src', './resources/images/Icon_home.png');
+				$("#aboutCls").attr('src', './resources/images/Icon_profile.png');
+				$("#portfolioCls").attr('src', './resources/images/Icon_portfolio.png');
+				$("#contactCls").attr('src', './resources/images/Icon_email_.png');
+
+				$(".wrapper-home").hide();
+				$(".wrapper-about").hide();
+				$(".wrapper-portfolio").hide();
+				$(".wrapper-contact").show();
+
+				// $("._spaceFormindmap").hide();
+				// $("#overlaylaunch-inAbox").hide();
+
+
+				var data_info = $(".Box_second").find($(".info"));
+				$(".wrap_info").append(data_info);
+				var data_twitter = $(".Box_third .right").find($(".twitter"));
+				$(".wrap_twitter").append(data_twitter);
+				var data_map = $(".Box_third .left").find($(".map"));
+				$(".wrap_map").append(data_map);
+				var data_facebook = $(".Box_third .left").find($(".facebook"));
+				$(".wrap_facebook").append(data_facebook);
+				var data_emailme = $(".Box_third .left").find($(".emailme"));
+				$(".wrap_emailme").append(data_emailme);
+			});
+		});
+
+	</script>
+</head>
+<body onload="select_guestbook();">
+	<header>
+		<div class="header logo">
+			<input type="button" value="미완성, 개발 중입니다...." id="btn_logo" class="btn_logo">
+			<div class="icon-home"><a id="homeLink" href="#"><img id="homeCls" src="./resources/images/Icon_home.png" alt="img"></a></div>
+			<div class="icon-about"><a id="aboutLink" href="#"><img id="aboutCls" src="./resources/images/Icon_profile.png" alt="img"></a></div>
+			<div class="icon-portfolio"><a id="portfolioLink" href="#"><img id="portfolioCls" src="./resources/images/Icon_portfolio.png" alt="img"></a></div>
+			<div class="icon-contact"><a id="contactLink" href="#"><img id="contactCls" src="./resources/images/Icon_email.png" alt="img"></a></div>
+			<input type="text" class="hidden_label">
+		</div>
+	</header>
+	<!-- <div id="memojang" class="memojang"></div> -->
+		<!-- <div class="wrapper-board">
+			<div style="align: center; width: 100%; height: 120px; background-color: white;">
+				<div style="width: 13%; height: 100%; background-image: url('./resources/images/ITselfer_logo.jpg'); background-size: cover;">
+					<div style="margin-left: 100%; width: 100%; padding: 5px;">
+					<!-- border-radius: 5px; border-width: 5px; border-color: lightblue; border-style: solid;"
+						<textarea cols="135" rows="8" ></textarea>
+
+					</div>
+				</div>
+			</div>
+		</div>-->
+		<!-- <div class="_spaceFormindmap" style="width: 100%; height: 100%; "></div> -->
+
+<!-- 
+<div id="overlay-inAbox" class="overlay">
+    <div class="toolbar"><a class="close" href="#"><span>x</span> close</a></div>
+    <div class="wrapper_memo" style="float: left;">
+        <div style="margin-left: 10px; float:left;">
+        	<!-- <form id="form_memo" name="form_memo" action="" method="get" style="width: 65px; float: left;"> 
+        		<input type="text" id="text_memo_name" name="text_memo_name" />
+        		<textarea id="textarea_memo" name="textarea_memo" cols="45" rows="8" style="float: left;"></textarea>
+        		<div id="submit_memo" onclick="submitData();">1213</div>
+				<!-- <input type="button" id="submit_memo" value="subscribe" style="width: 100%; height: 110px; border: 0px; border-width:1px; border-style: solid; border-color: gray; border-radius: 5px; color: white;"> 
+			<!-- </form> 
+        </div>
+    </div>
+</div>
+-->
+
+<!-- <a href="#" id="overlaylaunch-inAbox">방명록 글쓰기</a> -->
+<!-- -->
+
+	
+		<!-- mindmap 
+
+		<ul>
+		    <li><a href="#">Guestbook</a>
+		      <ul>
+		        <li><a href="http://twitter.com/kennethkufluk" target="_blank" class="icon twitter">Twitter</a></li>
+		        <li><a href="http://www.linkedin.com/in/kennethkufluk" target="_blank" class="icon linkedin">LinkedIn</a></li>
+		        <li><a href="http://www.facebook.com/kenneth.kufluk" target="_blank" class="icon facebook">Facebook</a></li>
+		        <li><a href="http://feeds.feedburner.com/KennethKufluk" target="_blank" class="icon rss">RSS Feed</a></li>
+
+		        <li><a>KBU</a>
+		          <ul>
+		            <li><a href="#KBU_friend" id="KBU_friend" title="KBU_friend">친구</a></li>
+		            <li><a href="#" title="KBU_higher">선배</a></li>
+		            <li><a href="#" title="KBU_lower">후배</a></li>
+		            <li><a href="#" title="KBU_etc">그 외</a></li>
+		          </ul>
+		        </li>
+
+		        <li><a href="#">남창</a>
+		          <ul>
+		            <li><a href="#" title="About Kenneth">친구</a></li>
+		            <li><a href="#" title="Employment">그 외</a></li>
+		          </ul>
+		        </li>
+
+		        <li><a href="#">3372</a>
+	        	<ul>
+		        </ul>
+		        </li>
+
+		        <li><a href="#">개발자</a>
+	        	<ul>
+		        </ul>
+		        </li>
+
+		      </ul>
+		    </li>
+		  </ul>
+
+		 mindmap -->
+
+
+
+		 <!-- Main_guestbook page -->
+		<div id="wrapper-guest" class="wrapper-guest">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+
+
+
+
+	<div class="wrapper-home">
+		<div class="Box_first">
+			<div class="profile">
+				<!--<a class="fancybox-thumbs" data-fancybox-group="thumb" href="./resources/images/Iphone_2.png"><img src="./resources/images/Iphone_2.png" alt=""><div class="shadowbar">▶ Hybrid in KT Econnovation</div></img> -->
+				<div class="profile-image"></div>
+				<div class="gallery-small-1 gallery"><div class="shadowbar">▶ Hybrid in KT Econnovation</div></div> 
+				</a>
+			</div>
+			<div class="aboutme about">
+				<div>
+					<small>ITselfer's history, his story.</small>
+					<h2>A<strong style="font-size: 20px;">bout Me</strong></h2>
+					<p style= "font-family: 'NanumMyrongjo'; font-style: normal; font-size: 11px; margin-top: -5px;">
+						<strong style="font-size: 22px;">ITselfer</strong>, 이 곳은 제 역사이자 제 이야기입니다.<br>
+						저의 개발자로서의 목표는 <strong style="font-size: 15px; color: red;">C/S full-stack Developer</strong> 입니다.<br>
+						저는 아직 젊기에, 고생도 찾아서 하고 스스로 <b>위로</b>와 <b>격려</b>를 아끼지 않는 스타일입니다.<br>
+						잘 부탁드리겠습니다.<br><br>
+						<strong style="font-size: 20px; color: skyblue;">"젊음에 손해가 어딨나!"</strong> - 송용일 전도사
+					</p>
+				</div>
+			</div>
+			<div class="gallery-small-2 gallery"><div class="shadowbar">▶ iPhone in SK Tacademy</div></div>
+			<div class="gallery-big-1 gallery"><div class="shadowbar">▶ Let me Introduce myself</div></div>
+			<div class="gallery-small-3 gallery"><div class="shadowbar">▶ iPhone in Seoul App Festival</div></div>
+			<div class="gallery-small-4 gallery"><div class="shadowbar">▶ Server in SK Tacademy</div></div>
+		</div>
+		<div class="Box_second">
+			<div class="info home">
+				<small>Personal Details.</small>
+				<h2>I<strong style="font-size: 20px;">nfo</strong></h2>
+				<div class="part_whole">
+					<div class="part_left">
+						<b>Name:</b>
+						<br><br><br>
+						<b>Birth:</b>
+						<br><br><br>
+						<b>Phone:</b>
+						<br><br><br>
+						<b>Email:</b>
+						<br><br><br>
+						<b>Addr:</b>
+						<br><br><br><br>
+						<b>Website:</b>
+					</div>
+					<div class="part_right">
+						<p style= "font-family: 'NanumMyrongjo'; font-style: normal; height: 15px; font-size: 12px; margin: 0px; padding: 0px;">정병수(Edward Jung)</p>
+						<br><br><br>
+						<p style= "font-family: 'NanumMyrongjo'; font-style: normal; height: 15px; font-size: 12px; margin: 0px; padding: 0px;">1991/02/15</p>
+						<br><br><br>
+						<p style= "font-family: 'NanumMyrongjo'; font-style: normal; height: 15px; font-size: 12px; margin: 0px; padding: 0px;">010-2269-0504</p>
+						<br><br><br>
+						<p style= "font-family: 'NanumMyrongjo'; font-style: normal; height: 15px; font-size: 12px; margin: 0px; padding: 0px;">itselfer@naver.com</p>
+						<br><br><br>
+						<p style= "font-family: 'NanumMyrongjo'; font-style: normal; height: 15px; font-size: 12px; margin: 0px; padding: 0px;">서울특별시 노원구 상계5동 한글비석로46길 52 <br>선우빌딩 옥탑방</p>
+						<br><br><br><br>
+						<p style= "font-family: 'NanumMyrongjo'; font-style: normal; height: 15px; font-size: 12px; margin: 0px; padding: 0px;">itselfer.link</p>
+					</div>
+				</div>
+				<div class="part_bottom">
+					기타 문의는 
+					<br>
+					e-mail 또는 핸드폰으로 해주시면
+					<br>
+					감사하겠습니다.
+				</div>	
+			</div>
+			<div class="skills about">
+				<div>
+					<small>What i can do for you.</small>
+					<h2>S<strong style="font-size: 20px;">kills</strong></h2>
+					<b>HTML5/CSS3</b>
+					<div style="width: 460px; height: 15px; background-color: #CDCDCD; border-radius: 5px; box-shadow: 3px 3px 0px 0px rgba(119, 119, 119, 0.85);">
+						<div style="width: 380px; height: 15px; background-color: #2ba7e1; border-radius: 5px;"></div>
+					</div>
+					<br>
+					<b>jQuery</b>
+					<div style="width: 460px; height: 15px; background-color: #CDCDCD; border-radius: 5px; box-shadow: 3px 3px 0px 0px rgba(119, 119, 119, 0.85);">
+						<div style="width: 360px; height: 15px; background-color: #2ba7e1; border-radius: 5px;"></div>
+					</div>
+					<br>
+					<b>Node.js</b>
+					<div style="width: 460px; height: 15px; background-color: #CDCDCD; border-radius: 5px; box-shadow: 3px 3px 0px 0px rgba(119, 119, 119, 0.85);">
+						<div style="width: 200px; height: 15px; background-color: #2ba7e1; border-radius: 5px;"></div>
+					</div>
+					<br>
+					<b>Angular.js</b>
+					<div style="width: 460px; height: 15px; background-color: #CDCDCD; border-radius: 5px; box-shadow: 3px 3px 0px 0px rgba(119, 119, 119, 0.85);">
+						<div style="width: 100px; height: 15px; background-color: #2ba7e1; border-radius: 5px;"></div>
+					</div>
+					<br>
+					<b>mysql</b>
+					<div style="width: 460px; height: 15px; background-color: #CDCDCD; border-radius: 5px; box-shadow: 3px 3px 0px 0px rgba(119, 119, 119, 0.85);">
+						<div style="width: 180px; height: 15px; background-color: #2ba7e1; border-radius: 5px;"></div>
+					</div>
+					<br>
+					<b>Presentation</b>
+					<div style="width: 460px; height: 15px; background-color: #CDCDCD; border-radius: 5px; box-shadow: 3px 3px 0px 0px rgba(119, 119, 119, 0.85);">
+						<div style="width: 420px; height: 15px; background-color: #2ba7e1; border-radius: 5px;"></div>
+					</div>
+					<br>
+					<b>Communication</b>
+					<div style="width: 460px; height: 15px; background-color: #CDCDCD; border-radius: 5px; box-shadow: 3px 3px 0px 0px rgba(119, 119, 119, 0.85);">
+						<div style="width: 420px; height: 15px; background-color: #2ba7e1; border-radius: 5px;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="message home"><img class="gallery-small-img" src="./resources/images/Message.jpg" alt="img"></div>
+			<div class="gallery-small-5 gallery"><div class="shadowbar">▶ Server in SK Tacademy</div></div>
+			<div class="employment about">
+					<div>
+						<small>Where i've worked.</small>
+						<h2>E<strong style="font-size: 20px;">mployment</strong></h2>
+						<div style="height: 600px;">
+							<div style="width: 160px; float: left; font-size: 12px; font-family:'NanumMyeongjo'">
+								<b>
+									2013.08.17
+									<br>
+									- 현재
+									<br><br>
+								</b>
+								<br><br><br><br><br><br><br><br><br>
+								<b>
+									2013.06
+									<br>
+									- 2013.08
+									<br><br>
+								</b>
+								<br><br><br><br><br><br><br><br><br><br><br>
+								<b>
+									2012.07
+									<br>
+									- 2012.09
+									<br><br>
+								</b>
+								<br><br><br><br><br><br><br><br><br>	
+								<b>
+									2009.09
+									<br>
+									- 2012.06
+									<br><br>
+								</b>
+							</div>
+							<div style="width: 300px; height: 165px; float: left; font-size: 15px; margin-bottom: 5px; font-family:'NanumMyeongjo'">
+								프리랜서 (With Team)
+								<br>
+								<small>Private, White Derby</small>
+								<br>
+								<p style="font-size: 11px; padding: 5px; line-height: 180%;">
+									경제적인 사정이 어려워 만들지 못하고 있는 중소규모의 
+									<br>
+									업체 혹은 교회에 저렴한 가격으로 홈페이지와 아이폰
+									<br>
+									어플리케이션을 제작 중입니다.
+									<br><br>
+									<b>
+										▶ &nbsp;ITSelfer's Portfolio	
+									</b>
+								</p>
+							</div>
+							<div style="width: 300px; height: 195px; float: left; font-size: 15px; font-family:'NanumMyeongjo'">
+								iPhone Developer (With Team)
+								<br>
+								<small>Seoul App Festival, 짬뽕뮤직</small>
+								<br>
+								<p style="font-size: 11px; padding: 5px; line-height: 180%;">
+									짬뽕뮤직은 서로 다른 녹음된 음원 파일을 사용자 
+									<br>
+									취향에 맞게 섞어(Mixing), 여러 사용자가 참여한 
+									<br>
+									하나의 음원이 만들어질 수 있게 해주는 
+									<br>
+									iPhone Application입니다.
+									<br><br>	
+									<b>
+										▶ &nbsp;짬뽕뮤직 : 1차 예선 통과
+									</b>
+								</p>
+							</div>
+							<div style="width: 300px; height: 175px; float: left; font-size: 15px; font-family:'NanumMyeongjo'">
+								Hybrid App Developer (With Team)
+								<br>
+								<small>KT Econnvation, 굿네이버스팀</small>
+								<br>
+								<p style="font-size: 11px; padding: 5px; line-height: 180%;">
+									굿네이버스(App)는 업체에서 제공된 컨텐츠를 갤러리와 
+									<br>
+									Mobile Player로 제공하는 Hybrid Application입니다. 
+									<br>
+									위의 App은 굿네이버스 업체에 재능기부를 하였습니다.
+									<br><br>
+									<b>
+										▶ &nbsp;굿네이버스 : 장려상 수상
+									</b>
+								</p>
+							</div>
+							<div style="width: 300px; height: 80px; float: left; font-size: 15px; font-family:'NanumMyeongjo'">
+								한국성서대학교 전산실 근무
+								<br>
+								<small>수업지원센터, 근로장학생</small>
+								<br>
+								<p style="font-size: 11px; padding: 5px; line-height: 180%;">
+									교내 PC정비 및 수업환경 세팅
+								</p>
+							</div>
+						</div>
+					</div>
+			</div>
+			<div class="education about">
+					<div>
+						<small>Where i studied.</small>
+						<h2>E<strong style="font-size: 20px;">ducation</strong></h2>
+						<div style="width: 465px;">
+							<div style="width: 20%; float: left; font-size: 12px; font-family:'NanumMyeongjo'">
+								<b>
+									2013
+								</b>
+								<br><br><br><br><br><br><br><br><br><br><br><br><br>
+								<b>
+									2012
+								</b>
+								<br><br><br><br><br><br><br><br><br><br><br>
+								<b>
+									2009
+								</b>
+							</div>
+							<div style="width: 80%; float: left; font-size: 15px; font-family:'NanumMyeongjo'">
+								교육 수강
+								<br>
+								<small>KT Econnovation, SK Tacademy</small>
+								<br>
+								<div style="font-size: 11px; height: 20px; width: 100%; padding: 5px; padding-top: 15px;">
+									SK와 KT에서 지원하는 교육기관에서 교육을 수강하였습니다.
+								</div>
+								<div>
+									<ul>
+										<li>
+											<b>Hybrid Application 개발 전문가과정 4기</b>
+										</li>
+										<small>(2012.07 ~ 2012.09, KT Econnovation)</small>
+										<br>
+										<li>
+											<b>iPhone Application 개발 전문가과정 5기</b>
+										</li>
+										<small>(2013.01 ~ 2013.03, SK Tacademy)</small>
+										<br>
+										<li>
+											<b>Server 개발 전문가과정 1기</b>
+										</li>
+										<small>(2013.04 ~ 2013.07, SK Tacademy)</small>
+									</ul>
+								</div>
+								<br>
+								휴학
+								<br>
+								<small>한국성서대학교 정보과학부</small>
+								<br>
+								<div style="font-size: 11px; height: 20px; width: 100%; padding: 5px; padding-top: 15px;">
+									4학년 1학기까지의 학점을 이수하였습니다.
+								</div>
+								<div style="margin-bottom: 10px;">
+									<ul>
+										<li>
+											<b>2011년도 정보과학부 학회장 취임</b>
+										</li>
+										<small>(2010.11 ~ 2011.11)</small>
+										<br>
+										<li>
+											<b>ASP.NET으로 졸업작품 '학과 홈페이지' 제작</b>
+										</li>
+										<small>(2012.03 ~ 2012.07)</small>
+									</ul>
+								</div>
+								고등학교 졸업
+								<br>
+								<small>남창고등학교, 울산</small>
+							</div>
+						</div>
+					</div>
+			</div>
+			<div class="gallery-small-6 gallery"><div class="shadowbar">▶ iPhone in SK Tacademy</div></div>
+			<div class="gallery-small-7 gallery"><div class="shadowbar">▶ Hybrid in KT Econnovation</div></div>
+		</div>
+		<div class="Box_third">
+			<div class="left">
+				<div class="map email">
+					<div id="map-canvas" class="map-canvas"></div>
+				</div>
+				<div class="emailme email">
+					<div>
+						<small>Get in touch.</small>
+						<h2>E<strong style="font-size: 20px;">mail me</strong></h2>
+						<form id="form" method="post" style="font-family:'NanumMyeongjo'">
+							<label>Name*</label> <br>
+							<input type="textbox" id="name" name="name" placeholder="Please enter your name." style="padding: 3px; margin-top: 5px; width: 98%; border: 1px solid #aaa; border-radius: 2px;"> <br><br>
+							<label>Email*</label> <br>
+							<input type="textbox" id="address" name="address" placeholder="Please use Gmail. ex) itselfer('@gmail.com' is not required.)" style="padding: 3px; margin-top: 5px; width: 98%; border: 1px solid #aaa; border-radius: 2px;"> <br><br>
+							<label>Message*</label> <br style="line-height: 150%;">
+							<textarea id="contents" name="contents" placeholder="Please enter your message to me." cols="40" rows="5" style="width: 98%; height: 120px;"></textarea> <br><br>	
+							<button id="sendEmailBtn" class="sendEmailBtn"><p style="padding: 5px; margin: 0px; font-family: 'NanumMyeongjo'; font-size: 16px;">Send Email</p><img src="./resources/images/Button_email.png" alt="img"></button>
+						</form>
+					</div>
+				</div>
+				<!-- <div class="gallery-small"><img class="gallery-small-img" src="./resources/Jbm_1.jpg"></div> -->
+				<div class="facebook email">
+					<div style="padding: 10px;">
+						<small>Like me!</small>
+						<h2>F<strong style="font-size: 20px;">acebook</strong></h2>
+						<div id="facebook_Story" class="facebook_data"></div>
+					</div>
+				</div>
+			</div>
+			<div class="right">
+				<div class="officeNetwork email">
+					<div>
+						<small>Word Address.</small>
+						<h2>O<strong style="font-size: 20px;">ffice</strong></h2>
+						<p style="height: 150px;">
+							<b>
+								울산시 울주군 온양읍 운화리 34-1
+								<br><br>
+								장원팰리스 301호 정병수
+							</b>
+							<br><br><br><br><br><br><br style="line-height:25px;">
+							<small>Come this way.</small>
+						</p>
+					</div>
+					<div>
+						<h2 style="margin-bottom: 10px;">N<strong style="font-size: 20px;">etworks</strong></h2>
+						<p style="height: 110px; style='margin:0px;'">
+							<a id="facebook" href="https://facebook.com/itselfer"><img id="icon-facebook" src="./resources/images/Icon_facebook.png" alt="img">&nbsp;&nbsp;<span>View my Facebook page</span></a>
+							<br><br>
+							<a id="twitter" href="https://twitter.com/itselfer"><img id="icon-twitter" src="./resources/images/Icon_twitter.png" alt="img">&nbsp;&nbsp;<span>View my Twitter page</span></a>
+							<br><br>
+							<a id="tistory" href="http://itselfer.tistory.com"><img id="icon-tistory" src="./resources/images/Icon_tistory.jpg" alt="img">&nbsp;&nbsp;<span>View my Tistory page</span></a>
+							<br><br>
+							<a id="blog" href="http://blog.naver.com/rneprlrndlv"><img id="icon-blog" src="./resources/images/Icon_blog.png" alt="img">&nbsp;&nbsp;<span>View my Naver Blog page</span></a>
+						</p>	
+					</div>
+				</div>
+				<div class="twitter email">
+					<small>Tweet me!</small>
+					<h2>T<strong style="font-size: 20px;">witter</strong></h2>
+					<!-- <p style="font-size: 12px; font-family:'NanumMyeongjo'">트위터로 간단한 메세지를 남기세요~!<br><br><iframe src="http://platform.twitter.com/widgets/tweet_button.html?url=itselfer" frameborder="0" style="width: 80px; height: 20px;"></iframe></p> -->
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="wrapper-about">
+		<div class="Box_about">
+			<div class="wrap_aboutme"></div>
+			<div class="wrap_skills"></div>
+			<div class="wrap_employment"></div>
+			<div class="wrap_education"></div>
+		</div>
+	</div>
+	<div class="wrapper-portfolio">
+		<div class="Box_portfolio">
+			<div class="Box_portfolio_left">
+				<div class="wrap_gallery_1"></div>
+				<div class="wrap_gallery_2"></div>
+				<div class="wrap_gallery_3"></div>
+			</div>
+			<div class="Box_portfolio Box_portfolio_center">
+				<div class="wrap_gallery_big_1"></div>
+				<div class="wrap_gallery_4"></div>
+				<div class="wrap_gallery_5"></div>
+			</div>
+			<div class="Box_portfolio_right">
+				<div class="wrap_gallery_6"></div>
+				<div class="wrap_gallery_7"></div>
+				<div class="wrap_message"></div>
+			</div>
+		</div>
+	</div>
+	<div class="wrapper-contact">
+		<div class="Box_contact">
+			<div class="Box_contact_left">
+				<div class="wrap_info"></div>
+				<div class="wrap_twitter"></div>
+			</div>
+			<div class="Box_contact_right">
+				<div class="wrap_map"></div>
+				<div class="wrap_emailme"></div>
+				<div class="wrap_facebook"></div>
+			</div>
+		</div>
+	</div>
+	<footer>
+		<div style="width: 760px; height: 70px; float: left;">
+			<h5>Copyright ⓒ 2015. 09. 03 | ITselfer</h5>
+		</div>
+		<div style="width: 210px; height: 70px; float: left;">
+			<a href="https://facebook.com/itselfer"><img id="icon-footer-facebook" class="icon-footer-facebook" src="./resources/images/Icon_facebook_footer.png" alt="img"></a>
+			<a href="https://twitter.com/itselfer"><img id="icon-footer-twitter" class="icon-footer-twitter" src="./resources/images/Icon_twitter_footer.png" alt="img"></a>
+			<a href="http://itselfer.tistory.com"><img id="icon-footer-tistory" class="icon-footer-tistory" src="./resources/images/Icon_tistory_footer.jpg" alt="img"></a>
+			<a href="http://blog.naver.com/rneprlrndlv"><img id="icon-footer-blog" class="icon-footer-blog" src="./resources/images/Icon_blog_footer.png" alt="img"></a>
+		</div>
+	<footer>
+</body>
+</html>
